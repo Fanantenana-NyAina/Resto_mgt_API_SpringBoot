@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder
+@Data
 public class IngredientPriceHistory {
     private int idPriceHistory;
     private Ingredient ingredient;
