@@ -60,4 +60,23 @@ public class StockMovementDAO implements DAO<StockMovement> {
             throw new ServerException(e);
         }
     }
+
+    public List<StockMovement> findByIdIngredient(int idIngredient) {
+        List<StockMovement> stockMovements = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "select s.id_movement, s.movement, s.quantity, s.unit, s.movement_datetime from stock_movement s"
+                             + " join ingredient i on s.id_ingredient = i.id_ingredient"
+                             + " where s.id_ingredient = ?")) {
+            statement.setLong(1, idIngredient);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    stockMovements.add(stockMovementMapper.apply(resultSet));
+                }
+                return stockMovements;
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e);
+        }
+    }
 }

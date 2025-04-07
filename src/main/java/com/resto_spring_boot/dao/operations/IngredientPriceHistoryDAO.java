@@ -2,6 +2,7 @@ package com.resto_spring_boot.dao.operations;
 
 import com.resto_spring_boot.dao.mapper.IngredientPriceHistoryMapper;
 import com.resto_spring_boot.models.Ingredient.IngredientPriceHistory;
+import com.resto_spring_boot.models.Stock.StockMovement;
 import com.resto_spring_boot.service.exception.ServerException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -59,6 +60,25 @@ public class IngredientPriceHistoryDAO implements DAO<IngredientPriceHistory> {
             }
 
             return prices;
+        }
+    }
+
+    public List<IngredientPriceHistory> findByIdIngredient(int idIngredient) {
+        List<IngredientPriceHistory> prices = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement("select p.id_price_history, p.price, p.history_date from ingredient_price_history p"
+                     + " join ingredient i on p.id_ingredient = i.id_ingredient"
+                     + " where p.id_ingredient = ?")) {
+            statement.setLong(1, idIngredient);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    IngredientPriceHistory price = ingredientPriceHistoryMapper.apply(resultSet);
+                    prices.add(price);
+                }
+                return prices;
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e);
         }
     }
 }
