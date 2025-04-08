@@ -16,7 +16,8 @@ public class IngredientPriceHistoryMapper implements Function<ResultSet, Ingredi
         IngredientPriceHistory ingredientPriceHistory = new IngredientPriceHistory();
         ingredientPriceHistory.setIdPriceHistory(resultSet.getInt("id_price_history"));
         ingredientPriceHistory.setPrice(resultSet.getDouble("price"));
-        ingredientPriceHistory.setDateTime(LocalDateTime.parse(resultSet.getString("history_date")));
-        return null;
+        ingredientPriceHistory.setDateTime(resultSet.getObject("history_date", LocalDateTime.class));
+
+        return ingredientPriceHistory;
     }
 }

@@ -3,7 +3,7 @@ package com.resto_spring_boot.dao.operations;
 import com.resto_spring_boot.dao.mapper.StockMovementMapper;
 import com.resto_spring_boot.models.Stock.StockMovement;
 import com.resto_spring_boot.service.exception.ServerException;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class StockMovementDAO implements DAO<StockMovement> {
     private DataSource dataSource;
     private StockMovementMapper stockMovementMapper;
 
     @Override
-    public List<StockMovement> getAll() {
+    public List<StockMovement> getAll(int page, int size) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

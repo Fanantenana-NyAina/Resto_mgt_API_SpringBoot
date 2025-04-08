@@ -6,8 +6,10 @@ import com.resto_spring_boot.dao.operations.StockMovementDAO;
 import com.resto_spring_boot.models.Ingredient.Ingredient;
 import com.resto_spring_boot.models.Ingredient.IngredientPriceHistory;
 import com.resto_spring_boot.models.Stock.StockMovement;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class IngredientMapper implements Function<ResultSet, Ingredient> {
     private IngredientPriceHistoryDAO ingredientPriceHistoryDAO;
     private StockMovementDAO stockMovementDAO;

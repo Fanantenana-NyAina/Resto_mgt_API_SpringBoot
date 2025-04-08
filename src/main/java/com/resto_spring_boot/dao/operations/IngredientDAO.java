@@ -5,6 +5,7 @@ import com.resto_spring_boot.models.Ingredient.Ingredient;
 import com.resto_spring_boot.dao.DbConnection;
 import com.resto_spring_boot.service.exception.NotFoundException;
 import com.resto_spring_boot.service.exception.ServerException;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class IngredientDAO implements DAO<Ingredient> {
     private final DbConnection dataSource = new DbConnection();
     private final IngredientMapper ingredientMapper;
@@ -24,13 +25,15 @@ public class IngredientDAO implements DAO<Ingredient> {
     private final StockMovementDAO stockMovementDAO;
 
     @Override
-    public List<Ingredient> getAll() {
+    public List<Ingredient> getAll(int page, int size) {
         List<Ingredient> ingredients = new ArrayList<>();
-        String sql = "select i.id_ingredient, i.name, i.unit from ingredient i order by i.id_ingredient asc offset ? limit ?";
+        String sql = "select i.id_ingredient, i.name from ingredient i order by i.id_ingredient asc limit ? offset ?";
 
         try {
             Connection con = dataSource.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, size);
+            ps.setInt(2, (page -1)*size);
 
             try (ResultSet rs = ps.executeQuery()) {
                 Ingredient ingredient = null;

@@ -1,7 +1,13 @@
 package com.resto_spring_boot.endpoint;
 
+import com.resto_spring_boot.endpoint.mapper.IngredientRestMapper;
+import com.resto_spring_boot.endpoint.rest.IngredientRest;
 import com.resto_spring_boot.models.Ingredient.Ingredient;
 import com.resto_spring_boot.service.IngredientService;
+import com.resto_spring_boot.service.exception.ClientException;
+import com.resto_spring_boot.service.exception.NotFoundException;
+import com.resto_spring_boot.service.exception.ServerException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,53 +15,32 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 @RestController()
-@RequestMapping("/")
+@RequiredArgsConstructor
 public class IngredientRestController {
-    IngredientService ingredientService;
-
-    public IngredientRestController(IngredientService ingredientService) {
-        this.ingredientService = ingredientService;
-    }
-
-    @GetMapping
-    public String HelloWord() {
-        return "Hello World";
-    }
+    private final IngredientService ingredientService;
+    private final IngredientRestMapper ingredientRestMapper;
 
     @GetMapping("/ingredients")
     public ResponseEntity<Object> getIngredients(@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter,
                                                  @RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {
-        if (priceMinFilter != null && priceMinFilter < 0) {
-            return new ResponseEntity<>("PriceMinFilter " + priceMinFilter + " is negative", HttpStatus.BAD_REQUEST);
-        }
-        if (priceMaxFilter != null && priceMaxFilter < 0) {
-            return new ResponseEntity<>("PriceMaxFilter " + priceMaxFilter + " is negative", HttpStatus.BAD_REQUEST);
-        }
-        if (priceMinFilter != null && priceMaxFilter != null) {
-            if (priceMinFilter > priceMaxFilter) {
-                return ResponseEntity.badRequest()
-                        .body("PriceMinFilter " + priceMinFilter + " is greater than PriceMaxFilter " + priceMaxFilter);
-            }
-        }
+        try {
+            List<Ingredient> retrieveIngredientByPrices = ingredientService.getIngredientsByPrices(priceMinFilter, priceMaxFilter);
+            List<IngredientRest> ingredientRests = retrieveIngredientByPrices.stream()
+                    .map(ingredient -> ingredientRestMapper.IngredientToIngredientRest(ingredient))
+                    .toList();
 
-        List<Ingredient> ingredients = ingredientService.getAllIngredients();
-        List<Ingredient> filteredIngredients = ingredients.stream()
-                .filter(ingredient -> {
-                    if (priceMinFilter == null && priceMaxFilter == null) {
-                        return true;
-                    }
-                    double unitPrice = ingredient.getUnitPrice();
-                    if (priceMinFilter != null && priceMaxFilter == null) {
-                        return unitPrice >= priceMinFilter;
-                    }
-                    if (priceMinFilter == null) {
-                        return unitPrice <= priceMaxFilter;
-                    }
-                    return unitPrice >= priceMinFilter && unitPrice <= priceMaxFilter;
-                })
-                .toList();
-        return ResponseEntity.ok().body(filteredIngredients);
+            return ResponseEntity.ok().body(ingredientRests);
+
+        } catch (ClientException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        } catch (ServerException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     @GetMapping("/ingredients/{id}")
@@ -65,18 +50,12 @@ public class IngredientRestController {
         if (optionalIngredient.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(optionalIngredient.get());
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient=" + id + " not found");
+        return ResponseEntity.status(NOT_FOUND).body("Ingredient=" + id + " not found");
     }
 
     @PostMapping("/ingredients/saveAll")
     public ResponseEntity<Object> saveIngredients(@RequestBody List<Ingredient> ingredients) {
         ingredientService.saveIngredients(ingredients);
         return ResponseEntity.status(HttpStatus.CREATED).body(ingredients);
-    }
-
-    @PutMapping("/ingredients/update")
-    public ResponseEntity<Object> updateIngredient(@RequestBody Ingredient ingredient) {
-        ingredientService.updateIngredientById(ingredient);
-        return ResponseEntity.status(HttpStatus.OK).body(ingredient);
     }
 }

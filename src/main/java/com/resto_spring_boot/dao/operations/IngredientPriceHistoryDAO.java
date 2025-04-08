@@ -2,10 +2,11 @@ package com.resto_spring_boot.dao.operations;
 
 import com.resto_spring_boot.dao.mapper.IngredientPriceHistoryMapper;
 import com.resto_spring_boot.models.Ingredient.IngredientPriceHistory;
-import com.resto_spring_boot.models.Stock.StockMovement;
 import com.resto_spring_boot.service.exception.ServerException;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -17,13 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class IngredientPriceHistoryDAO implements DAO<IngredientPriceHistory> {
     private DataSource dataSource;
     private IngredientPriceHistoryMapper ingredientPriceHistoryMapper;
 
     @Override
-    public List<IngredientPriceHistory> getAll() {
+    public List<IngredientPriceHistory> getAll(int page, int size) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
