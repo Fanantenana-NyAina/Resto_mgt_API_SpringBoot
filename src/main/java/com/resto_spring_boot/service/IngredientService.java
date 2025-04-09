@@ -1,6 +1,6 @@
 package com.resto_spring_boot.service;
 
-import com.resto_spring_boot.models.Ingredient.Ingredient;
+import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.dao.operations.IngredientDAO;
 import com.resto_spring_boot.service.exception.ClientException;
 import lombok.RequiredArgsConstructor;

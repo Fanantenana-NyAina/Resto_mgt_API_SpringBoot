@@ -1,6 +1,6 @@
 package com.resto_spring_boot.endpoint.rest;
 
-import com.resto_spring_boot.models.Stock.Movement;
+import com.resto_spring_boot.models.stock.Movement;
 import com.resto_spring_boot.models.Unit;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

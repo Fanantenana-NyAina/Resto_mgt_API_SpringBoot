@@ -1,8 +1,8 @@
-package com.resto_spring_boot.endpoint;
+package com.resto_spring_boot.endpoint.controller;
 
 import com.resto_spring_boot.endpoint.mapper.IngredientRestMapper;
 import com.resto_spring_boot.endpoint.rest.IngredientRest;
-import com.resto_spring_boot.models.Ingredient.Ingredient;
+import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.service.IngredientService;
 import com.resto_spring_boot.service.exception.ClientException;
 import com.resto_spring_boot.service.exception.NotFoundException;
@@ -57,5 +57,15 @@ public class IngredientRestController {
     public ResponseEntity<Object> saveIngredients(@RequestBody List<Ingredient> ingredients) {
         ingredientService.saveIngredients(ingredients);
         return ResponseEntity.status(HttpStatus.CREATED).body(ingredients);
+    }
+
+    @PutMapping("/ingredients/{id}/prices")
+    public ResponseEntity<Object> updateIngredientPrice(@PathVariable int id, @RequestBody List<Ingredient> ingredients) {
+        throw new UnsupportedOperationException("Not suppported yet");
+    }
+
+    @PutMapping("/ingredients/{id}/stockMovements")
+    public ResponseEntity<Object> updateStockMovement(@PathVariable int id, @RequestBody List<Ingredient> ingredients) {
+        throw new UnsupportedOperationException("Not suppported yet");
     }
 }

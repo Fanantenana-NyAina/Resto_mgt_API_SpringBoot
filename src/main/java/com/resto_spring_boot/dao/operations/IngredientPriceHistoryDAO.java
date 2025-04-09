@@ -1,15 +1,13 @@
 package com.resto_spring_boot.dao.operations;
 
+import com.resto_spring_boot.dao.DbConnection;
 import com.resto_spring_boot.dao.mapper.IngredientPriceHistoryMapper;
-import com.resto_spring_boot.models.Ingredient.IngredientPriceHistory;
+import com.resto_spring_boot.models.ingredient.IngredientPriceHistory;
 import com.resto_spring_boot.service.exception.ServerException;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class IngredientPriceHistoryDAO implements DAO<IngredientPriceHistory> {
-    private DataSource dataSource;
-    private IngredientPriceHistoryMapper ingredientPriceHistoryMapper;
+    private final DbConnection dataSource;
+    private final IngredientPriceHistoryMapper ingredientPriceHistoryMapper;
 
     @Override
     public List<IngredientPriceHistory> getAll(int page, int size) {
@@ -65,11 +63,13 @@ public class IngredientPriceHistoryDAO implements DAO<IngredientPriceHistory> {
     }
 
     public List<IngredientPriceHistory> findByIdIngredient(int idIngredient) {
+        String sql = "select p.id_price_history, p.price, p.history_date from ingredient_price_history p"
+                + " join ingredient i on p.id_ingredient = i.id_ingredient"
+                + " where p.id_ingredient = ?";
         List<IngredientPriceHistory> prices = new ArrayList<>();
+
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("select p.id_price_history, p.price, p.history_date from ingredient_price_history p"
-                     + " join ingredient i on p.id_ingredient = i.id_ingredient"
-                     + " where p.id_ingredient = ?")) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, idIngredient);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {

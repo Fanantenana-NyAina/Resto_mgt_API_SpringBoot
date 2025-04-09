@@ -5,7 +5,7 @@ import com.resto_spring_boot.endpoint.rest.CreateOrUpdateIngredient;
 import com.resto_spring_boot.endpoint.rest.IngredientPriceHistoryRest;
 import com.resto_spring_boot.endpoint.rest.IngredientRest;
 import com.resto_spring_boot.endpoint.rest.StockMovementRest;
-import com.resto_spring_boot.models.Ingredient.Ingredient;
+import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.service.exception.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

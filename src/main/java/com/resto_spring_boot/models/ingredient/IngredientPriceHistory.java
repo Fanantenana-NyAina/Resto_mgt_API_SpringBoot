@@ -1,4 +1,4 @@
-package com.resto_spring_boot.models.Ingredient;
+package com.resto_spring_boot.models.ingredient;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

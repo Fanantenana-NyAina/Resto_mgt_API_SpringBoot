@@ -1,7 +1,7 @@
 package com.resto_spring_boot.dao.mapper;
 
-import com.resto_spring_boot.models.Stock.Movement;
-import com.resto_spring_boot.models.Stock.StockMovement;
+import com.resto_spring_boot.models.stock.Movement;
+import com.resto_spring_boot.models.stock.StockMovement;
 import com.resto_spring_boot.models.Unit;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;

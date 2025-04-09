@@ -1,6 +1,6 @@
-package com.resto_spring_boot.models.Ingredient;
+package com.resto_spring_boot.models.ingredient;
 
-import com.resto_spring_boot.models.Stock.StockMovement;
+import com.resto_spring_boot.models.stock.StockMovement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static com.resto_spring_boot.models.Stock.Movement.IN;
-import static com.resto_spring_boot.models.Stock.Movement.OUT;
+import static com.resto_spring_boot.models.stock.Movement.IN;
+import static com.resto_spring_boot.models.stock.Movement.OUT;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,7 +43,11 @@ public class Ingredient {
     }
 
     public Double getActualPrice() {
-        return findActualPrice().orElse(new IngredientPriceHistory(0, this, 0.0, LocalDateTime.now())).getPrice();
+        return findActualPrice().orElse(
+                new IngredientPriceHistory(
+                        0,
+                        this,
+                        0.0, LocalDateTime.now())).getPrice();
     }
 
     public Double getAvailableQuantity() {

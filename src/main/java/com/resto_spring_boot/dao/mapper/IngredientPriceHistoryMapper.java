@@ -1,6 +1,6 @@
 package com.resto_spring_boot.dao.mapper;
 
-import com.resto_spring_boot.models.Ingredient.IngredientPriceHistory;
+import com.resto_spring_boot.models.ingredient.IngredientPriceHistory;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,7 @@
 package com.resto_spring_boot.endpoint.mapper;
 
 import com.resto_spring_boot.endpoint.rest.StockMovementRest;
-import com.resto_spring_boot.models.Stock.StockMovement;
+import com.resto_spring_boot.models.stock.StockMovement;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;

@@ -1,6 +1,6 @@
-package com.resto_spring_boot.models.Stock;
+package com.resto_spring_boot.models.stock;
 
-import com.resto_spring_boot.models.Ingredient.Ingredient;
+import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.models.Unit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

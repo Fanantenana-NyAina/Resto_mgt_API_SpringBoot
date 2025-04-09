@@ -1,21 +1,21 @@
 package com.resto_spring_boot.dao.operations;
 
+import com.resto_spring_boot.dao.DbConnection;
 import com.resto_spring_boot.dao.mapper.StockMovementMapper;
-import com.resto_spring_boot.models.Stock.StockMovement;
+import com.resto_spring_boot.models.stock.StockMovement;
 import com.resto_spring_boot.service.exception.ServerException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class StockMovementDAO implements DAO<StockMovement> {
-    private DataSource dataSource;
-    private StockMovementMapper stockMovementMapper;
+    private final DbConnection dataSource;
+    private final StockMovementMapper stockMovementMapper;
 
     @Override
     public List<StockMovement> getAll(int page, int size) {

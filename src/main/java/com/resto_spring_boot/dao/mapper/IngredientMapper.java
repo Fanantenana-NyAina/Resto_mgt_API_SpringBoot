@@ -3,13 +3,11 @@ package com.resto_spring_boot.dao.mapper;
 
 import com.resto_spring_boot.dao.operations.IngredientPriceHistoryDAO;
 import com.resto_spring_boot.dao.operations.StockMovementDAO;
-import com.resto_spring_boot.models.Ingredient.Ingredient;
-import com.resto_spring_boot.models.Ingredient.IngredientPriceHistory;
-import com.resto_spring_boot.models.Stock.StockMovement;
+import com.resto_spring_boot.models.ingredient.Ingredient;
+import com.resto_spring_boot.models.ingredient.IngredientPriceHistory;
+import com.resto_spring_boot.models.stock.StockMovement;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
