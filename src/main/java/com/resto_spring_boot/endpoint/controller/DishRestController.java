@@ -42,4 +42,9 @@ public class DishRestController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+
+    @PutMapping("/dishes/{id}/ingredients")
+    public ResponseEntity<Object> addDishIngredientList () {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
 }
