@@ -6,12 +6,10 @@ import com.resto_spring_boot.dao.DbConnection;
 import com.resto_spring_boot.service.exception.NotFoundException;
 import com.resto_spring_boot.service.exception.ServerException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +69,7 @@ public class IngredientDAO implements DAO<Ingredient> {
         }
     }
 
+    @SneakyThrows
     @Override
     public List<Ingredient> saveAll(List<Ingredient> entities) {
         List<Ingredient> newIngredients = new ArrayList<>();
@@ -79,29 +78,36 @@ public class IngredientDAO implements DAO<Ingredient> {
                 + " returning id_ingredient, name";
 
         try (Connection con = dataSource.getConnection()) {
-            try (PreparedStatement ps = con.prepareStatement(sql)) {
-                entities.forEach(entityToSave -> {
-                    try {
-                        ps.setInt(1, entityToSave.getIdIngredient());
-                        ps.setString(2, entityToSave.getIngredientName());
-                        ps.addBatch();
-                    } catch (SQLException e) {
-                        throw new ServerException(e);
-                    }
-                    ingredientPriceHistoryDAO.saveAll((entityToSave.getPrices()));
-                    stockMovementDAO.saveAll((entityToSave.getStockMovements()));
-                });
-                try(ResultSet rs = ps.executeQuery()) {
+            con.setAutoCommit(false);
+
+            try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+                for (Ingredient entityToSave : entities) {
+                    ps.setInt(1, entityToSave.getIdIngredient());
+                    ps.setString(2, entityToSave.getIngredientName());
+                    ps.addBatch();
+
+                    ingredientPriceHistoryDAO.saveAll(entityToSave.getPrices());
+                    stockMovementDAO.saveAll(entityToSave.getStockMovements());
+                }
+                ps.executeBatch();
+
+                try(ResultSet rs = ps.getGeneratedKeys()) {
                     while (rs.next()) {
                         newIngredients.add(ingredientMapper.apply(rs));
                     }
                 }
+
+                con.commit();
+                return newIngredients;
+
+            } catch (SQLException e) {
+                con.rollback();
+                throw new ServerException(e);
             }
 
         } catch (SQLException e) {
             throw new ServerException(e);
         }
-
-        return newIngredients;
     }
 }

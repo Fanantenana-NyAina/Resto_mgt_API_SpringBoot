@@ -34,43 +34,46 @@ public class IngredientPriceHistoryDAO implements DAO<IngredientPriceHistory> {
     @SneakyThrows
     @Override
     public List<IngredientPriceHistory> saveAll(List<IngredientPriceHistory> entities) {
-        List<IngredientPriceHistory> prices = new ArrayList<>();
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement statement = con.prepareStatement(
-                     "insert into price (id_price_history, id_ingredient, price, history_date) values (?, ?, ?, ?)"
-                             + " on conflict (id_price_history) do nothing"
-                             + " id_price_history, id_ingredient, price, history_date")) {
-            entities.forEach(entityToSave -> {
-                try {
-                    statement.setInt(1, entityToSave.getIdPriceHistory());
-                    statement.setInt(2, entityToSave.getIngredient().getIdIngredient());
-                    statement.setDouble(3, entityToSave.getPrice());
-                    statement.setObject(4, entityToSave.getDateTime());
-                    statement.addBatch();
-                } catch (SQLException e) {
-                    throw new ServerException(e);
-                }
-            });
+        List<IngredientPriceHistory> savedPrices = new ArrayList<>();
 
-            try (ResultSet rs = statement.executeQuery()) {
-                while (rs.next()) {
-                    prices.add(ingredientPriceHistoryMapper.apply(rs));
+        String sql = "insert into ingredient_price_history (id_ingredient, price, history_date) " +
+                "values (?, ?, ?) returning id_price_history, id_ingredient, price, history_date";
+
+        try (Connection con = dataSource.getConnection()) {
+            con.setAutoCommit(false);
+
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                for (IngredientPriceHistory entity : entities) {
+                    ps.setInt(1, entity.getIngredient().getIdIngredient());
+                    ps.setDouble(2, entity.getIngredientPrice());
+                    ps.setObject(3, entity.getDateTime());
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            savedPrices.add(ingredientPriceHistoryMapper.apply(rs));
+                        }
+                    }
                 }
+                con.commit();
+            } catch (SQLException e) {
+                con.rollback();
+                throw new ServerException(e);
+            } finally {
+                con.setAutoCommit(true);
             }
-
-            return prices;
         }
+        return savedPrices;
     }
 
     public List<IngredientPriceHistory> findByIdIngredient(int idIngredient) {
-        String sql = "select p.id_price_history, p.price, p.history_date from ingredient_price_history p"
-                + " join ingredient i on p.id_ingredient = i.id_ingredient"
-                + " where p.id_ingredient = ?";
+        String sql = "select iph.id_price_history, iph.price, iph.history_date, iph.id_ingredient from ingredient_price_history iph"
+                + " join ingredient i on iph.id_ingredient = i.id_ingredient"
+                + " where iph.id_ingredient = ?";
         List<IngredientPriceHistory> prices = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, idIngredient);
+            statement.setInt(1, idIngredient);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     IngredientPriceHistory price = ingredientPriceHistoryMapper.apply(resultSet);

@@ -1,8 +1,10 @@
 package com.resto_spring_boot.endpoint.controller;
 
 import com.resto_spring_boot.endpoint.mapper.IngredientRestMapper;
+import com.resto_spring_boot.endpoint.rest.CreateIngredientPriceHitsory;
 import com.resto_spring_boot.endpoint.rest.IngredientRest;
 import com.resto_spring_boot.models.ingredient.Ingredient;
+import com.resto_spring_boot.models.ingredient.IngredientPriceHistory;
 import com.resto_spring_boot.service.IngredientService;
 import com.resto_spring_boot.service.exception.ClientException;
 import com.resto_spring_boot.service.exception.NotFoundException;
@@ -12,9 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController()
@@ -59,13 +65,23 @@ public class IngredientRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ingredients);
     }
 
-    @PutMapping("/ingredients/{id}/prices")
-    public ResponseEntity<Object> updateIngredientPrice(@PathVariable int id, @RequestBody List<Ingredient> ingredients) {
-        throw new UnsupportedOperationException("Not suppported yet");
+    @PutMapping("/ingredients/{idIngredient}/prices")
+    public ResponseEntity<Object> updateIngredientPrice(
+            @PathVariable int idIngredient,
+            @RequestBody List<CreateIngredientPriceHitsory> ingredientPriceHistories) {
+
+        List<IngredientPriceHistory> priceHistories = ingredientPriceHistories.stream()
+                .map(dto -> new IngredientPriceHistory(dto.getPrice(), dto.getDateTime()))
+                .toList();
+
+        Ingredient ingredient = ingredientService.addPriceHistories(idIngredient, priceHistories);
+
+        return ResponseEntity.ok().body(ingredientRestMapper.IngredientToIngredientRest(ingredient));
     }
 
-    @PutMapping("/ingredients/{id}/stockMovements")
-    public ResponseEntity<Object> updateStockMovement(@PathVariable int id, @RequestBody List<Ingredient> ingredients) {
+
+    @PutMapping("/ingredients/{idIngredient}/stockMovements")
+    public ResponseEntity<Object> updateStockMovement(@PathVariable int idIngredient, @RequestBody List<Ingredient> ingredients) {
         throw new UnsupportedOperationException("Not suppported yet");
     }
 }

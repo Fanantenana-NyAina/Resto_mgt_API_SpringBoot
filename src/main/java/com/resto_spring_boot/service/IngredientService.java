@@ -1,17 +1,24 @@
 package com.resto_spring_boot.service;
 
+import com.resto_spring_boot.dao.operations.IngredientPriceHistoryDAO;
 import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.dao.operations.IngredientDAO;
+import com.resto_spring_boot.models.ingredient.IngredientPriceHistory;
 import com.resto_spring_boot.service.exception.ClientException;
+import com.resto_spring_boot.service.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class IngredientService {
     private final IngredientDAO ingredientDAO;
+    private final IngredientPriceHistoryDAO ingredientPriceHistoryDAO;
 
     public List<Ingredient> getAllIngredients(int page, int size) {
         return ingredientDAO.getAll(page, size);
@@ -60,5 +67,21 @@ public class IngredientService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Ingredient addPriceHistories(int ingredientId, List<IngredientPriceHistory> toAddIngredientPriceHistories) {
+        Ingredient ingredient = ingredientDAO.getById(ingredientId);
+
+        List<IngredientPriceHistory> ingredientPriceHistoriesWithIngredient = toAddIngredientPriceHistories.stream()
+                .map(ingredientPriceHisto -> {
+                    IngredientPriceHistory ingredientPriceHistory = new IngredientPriceHistory(ingredient, ingredientPriceHisto.getIngredientPrice(), ingredientPriceHisto.getDateTime());
+                    return ingredientPriceHistory;
+                })
+                .toList();
+
+        List<IngredientPriceHistory> savingIngredientPriceHistories = ingredientPriceHistoryDAO.saveAll(ingredientPriceHistoriesWithIngredient);
+
+        ingredient.getPrices().addAll(savingIngredientPriceHistories);
+        return ingredientDAO.getById(ingredientId);
     }
 }

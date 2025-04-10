@@ -17,7 +17,7 @@ public class IngredientPriceHistoryRestMapper implements Function<IngredientPric
 
         return new IngredientPriceHistoryRest(
                 ingredientPriceHistory.getIdPriceHistory(),
-                ingredientPriceHistory.getPrice(),
+                ingredientPriceHistory.getIngredientPrice(),
                 ingredientPriceHistory.getDateTime()
         );
     }

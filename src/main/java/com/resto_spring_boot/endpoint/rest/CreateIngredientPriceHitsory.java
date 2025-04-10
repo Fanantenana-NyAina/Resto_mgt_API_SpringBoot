@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Getter
-public class PricingIngredient {
+public class CreateIngredientPriceHitsory {
     private Double price;
     private LocalDateTime dateTime;
 }

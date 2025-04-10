@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -33,21 +34,48 @@ public class Ingredient {
         return getStockMovements();
     }
 
-    public List<IngredientPriceHistory> addPrices(List<IngredientPriceHistory> prices) {
-        if (getPrices() == null || getPrices().isEmpty()) {
-            return prices;
+    public List<IngredientPriceHistory> addPrices(List<IngredientPriceHistory> newPrices) {
+        if (newPrices == null) return this.prices;
+
+        // Initialisation
+        if (this.prices == null) {
+            this.prices = new ArrayList<>();
         }
-        prices.forEach(price -> price.setIngredient(this));
-        getPrices().addAll(prices);
-        return getPrices();
+
+        // Vérification finale
+        newPrices.forEach(price -> {
+            if (price.getIngredient() == null) {
+                throw new IllegalStateException("ERREUR CRITIQUE: Historique sans ingrédient");
+            }
+        });
+
+        this.prices.addAll(newPrices);
+        return this.prices;
     }
+
+    //rectified1
+    /*public List<IngredientPriceHistory> addPrices(List<IngredientPriceHistory> newPrices) {
+        if (newPrices == null || newPrices.isEmpty()) {
+            return getPrices();
+        }
+
+        newPrices.forEach(price -> price.setIngredient(this)); // Lien crucial ici
+
+        if (this.prices == null) {
+            this.prices = new ArrayList<>();
+        }
+
+        this.prices.addAll(newPrices);
+        return this.prices;
+    }*/
+
 
     public Double getActualPrice() {
         return findActualPrice().orElse(
                 new IngredientPriceHistory(
                         0,
                         this,
-                        0.0, LocalDateTime.now())).getPrice();
+                        0.0, LocalDateTime.now())).getIngredientPrice();
     }
 
     public Double getAvailableQuantity() {
@@ -55,7 +83,7 @@ public class Ingredient {
     }
 
     public Double getPriceAt(LocalDateTime dateValue) {
-        return findPriceAt(dateValue).orElse(new IngredientPriceHistory(0, this, 0.0, LocalDateTime.now())).getPrice();
+        return findPriceAt(dateValue).orElse(new IngredientPriceHistory(0, this, 0.0, LocalDateTime.now())).getIngredientPrice();
     }
 
     public Double getAvailableQuantityAt(LocalDateTime datetime) {

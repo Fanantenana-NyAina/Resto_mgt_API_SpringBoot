@@ -1,5 +1,6 @@
 package com.resto_spring_boot.dao.mapper;
 
+import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.models.ingredient.IngredientPriceHistory;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -12,12 +13,20 @@ import java.util.function.Function;
 public class IngredientPriceHistoryMapper implements Function<ResultSet, IngredientPriceHistory> {
     @SneakyThrows
     @Override
-    public IngredientPriceHistory apply(ResultSet resultSet) {
-        IngredientPriceHistory ingredientPriceHistory = new IngredientPriceHistory();
-        ingredientPriceHistory.setIdPriceHistory(resultSet.getInt("id_price_history"));
-        ingredientPriceHistory.setPrice(resultSet.getDouble("price"));
-        ingredientPriceHistory.setDateTime(resultSet.getObject("history_date", LocalDateTime.class));
+    public IngredientPriceHistory apply(ResultSet rs) {
+        // Crée un nouvel historique
+        IngredientPriceHistory history = new IngredientPriceHistory();
 
-        return ingredientPriceHistory;
+        // Remplit les champs de base
+        history.setIdPriceHistory(rs.getInt("id_price_history"));
+        history.setIngredientPrice(rs.getDouble("price"));
+        history.setDateTime(rs.getObject("history_date", LocalDateTime.class));
+
+        // Crée et associe l'ingrédient (CRUCIAL)
+        Ingredient ingredient = new Ingredient();
+        ingredient.setIdIngredient(rs.getInt("id_ingredient"));
+        history.setIngredient(ingredient);
+
+        return history;
     }
 }
