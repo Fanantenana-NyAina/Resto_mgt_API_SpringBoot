@@ -84,4 +84,20 @@ public class IngredientService {
         ingredient.getPrices().addAll(savingIngredientPriceHistories);
         return ingredientDAO.getById(ingredientId);
     }
+
+    public Ingredient addStockMovement(int ingredientId, List<StockMovement> toAddStockMovement) {
+        Ingredient ingredient = ingredientDAO.getById(ingredientId);
+
+        List<StockMovement> ingredientWithStockMovement = toAddStockMovement.stream()
+                .map(stockMovement -> {
+                    StockMovement stockMov = new StockMovement(ingredient, stockMovement.getQuantity(), stockMovement.getUnit(), stockMovement.getMovementType(), stockMovement.getMovementDateTime());
+                    return stockMov;
+                })
+                .toList();
+
+        List<StockMovement> savingStockMoves = stockMovementDAO.saveAll(ingredientWithStockMovement);
+
+        ingredient.getStockMovements().addAll(savingStockMoves);
+        return ingredientDAO.getById(ingredientId);
+    }
 }
