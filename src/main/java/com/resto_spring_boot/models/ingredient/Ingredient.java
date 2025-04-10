@@ -35,26 +35,6 @@ public class Ingredient {
     }
 
     public List<IngredientPriceHistory> addPrices(List<IngredientPriceHistory> newPrices) {
-        if (newPrices == null) return this.prices;
-
-        // Initialisation
-        if (this.prices == null) {
-            this.prices = new ArrayList<>();
-        }
-
-        // Vérification finale
-        newPrices.forEach(price -> {
-            if (price.getIngredient() == null) {
-                throw new IllegalStateException("ERREUR CRITIQUE: Historique sans ingrédient");
-            }
-        });
-
-        this.prices.addAll(newPrices);
-        return this.prices;
-    }
-
-    //rectified1
-    /*public List<IngredientPriceHistory> addPrices(List<IngredientPriceHistory> newPrices) {
         if (newPrices == null || newPrices.isEmpty()) {
             return getPrices();
         }
