@@ -67,7 +67,7 @@ public class Ingredient {
 
         this.prices.addAll(newPrices);
         return this.prices;
-    }*/
+    }
 
 
     public Double getActualPrice() {
