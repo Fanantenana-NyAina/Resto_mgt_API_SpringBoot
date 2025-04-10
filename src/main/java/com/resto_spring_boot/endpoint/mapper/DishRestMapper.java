@@ -22,6 +22,7 @@ public class DishRestMapper {
                 dish.getIdDish(),
                 dish.getDishName(),
                 dish.getUnitPrice(),
+                dish.getAvalaibleQuantity(),
                 dishIngredients
         );
     }

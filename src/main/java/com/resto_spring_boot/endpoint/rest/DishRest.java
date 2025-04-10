@@ -11,5 +11,6 @@ public class DishRest {
     private int idDish;
     private String dishName;
     private Double unitPrice;
+    private int avalaibleQuantity;
     private List<DishIngredientRest> dishIngredients;
 }
