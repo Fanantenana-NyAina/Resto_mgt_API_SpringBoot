@@ -25,14 +25,14 @@ public class Ingredient {
     private List<IngredientPriceHistory> prices;
     private List<StockMovement> stockMovements;
 
-    public List<StockMovement> addStockMovements(List<StockMovement> stockMovements) {
+    /*public List<StockMovement> addStockMovements(List<StockMovement> stockMovements) {
         stockMovements.forEach(stockMovement -> stockMovement.setIngredient(this));
         if (getStockMovements() == null || getStockMovements().isEmpty()) {
             return stockMovements;
         }
         getStockMovements().addAll(stockMovements);
         return getStockMovements();
-    }
+    }*/
 
     public List<IngredientPriceHistory> addPrices(List<IngredientPriceHistory> newPrices) {
         if (newPrices == null || newPrices.isEmpty()) {
@@ -47,6 +47,21 @@ public class Ingredient {
 
         this.prices.addAll(newPrices);
         return this.prices;
+    }
+
+    public List<StockMovement> addStockMovements(List<StockMovement> newStockMovements) {
+        if(stockMovements == null || stockMovements.isEmpty()) {
+            return getStockMovements();
+        }
+
+        newStockMovements.forEach(movement -> movement.setIngredient(this));
+
+        if (this.stockMovements == null) {
+            this.stockMovements = new ArrayList<>();
+        }
+
+        this.stockMovements.addAll(newStockMovements);
+        return this.stockMovements;
     }
 
 

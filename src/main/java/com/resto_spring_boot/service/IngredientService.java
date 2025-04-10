@@ -1,9 +1,11 @@
 package com.resto_spring_boot.service;
 
 import com.resto_spring_boot.dao.operations.IngredientPriceHistoryDAO;
+import com.resto_spring_boot.dao.operations.StockMovementDAO;
 import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.dao.operations.IngredientDAO;
 import com.resto_spring_boot.models.ingredient.IngredientPriceHistory;
+import com.resto_spring_boot.models.stock.StockMovement;
 import com.resto_spring_boot.service.exception.ClientException;
 import com.resto_spring_boot.service.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class IngredientService {
     private final IngredientDAO ingredientDAO;
     private final IngredientPriceHistoryDAO ingredientPriceHistoryDAO;
+    private final StockMovementDAO stockMovementDAO;
 
     public List<Ingredient> getAllIngredients(int page, int size) {
         return ingredientDAO.getAll(page, size);

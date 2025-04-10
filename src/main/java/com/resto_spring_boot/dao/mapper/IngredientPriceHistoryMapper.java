@@ -14,15 +14,12 @@ public class IngredientPriceHistoryMapper implements Function<ResultSet, Ingredi
     @SneakyThrows
     @Override
     public IngredientPriceHistory apply(ResultSet rs) {
-        // Crée un nouvel historique
         IngredientPriceHistory history = new IngredientPriceHistory();
 
-        // Remplit les champs de base
         history.setIdPriceHistory(rs.getInt("id_price_history"));
         history.setIngredientPrice(rs.getDouble("price"));
         history.setDateTime(rs.getObject("history_date", LocalDateTime.class));
 
-        // Crée et associe l'ingrédient (CRUCIAL)
         Ingredient ingredient = new Ingredient();
         ingredient.setIdIngredient(rs.getInt("id_ingredient"));
         history.setIngredient(ingredient);

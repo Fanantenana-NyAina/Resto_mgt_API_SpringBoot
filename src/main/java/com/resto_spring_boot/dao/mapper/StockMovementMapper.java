@@ -1,5 +1,6 @@
 package com.resto_spring_boot.dao.mapper;
 
+import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.models.stock.Movement;
 import com.resto_spring_boot.models.stock.StockMovement;
 import com.resto_spring_boot.models.Unit;
@@ -17,10 +18,14 @@ public class StockMovementMapper implements Function<ResultSet, StockMovement> {
     public StockMovement apply(ResultSet resultSet) {
         StockMovement stockMovement = new StockMovement();
         stockMovement.setIdMovement(resultSet.getInt("id_movement"));
-        stockMovement.setMovementType(Movement.valueOf(resultSet.getString("movement")));
         stockMovement.setQuantity(resultSet.getDouble("quantity"));
-        stockMovement.setUnit(Unit.valueOf(resultSet.getString("unit")));
         stockMovement.setMovementDateTime(resultSet.getObject("movement_datetime", LocalDateTime.class));
+        stockMovement.setMovementType(Movement.valueOf(resultSet.getString("movement")));
+        stockMovement.setUnit(Unit.valueOf(resultSet.getString("unit")));
+
+        Ingredient ingredient = new Ingredient();
+        ingredient.setIdIngredient(resultSet.getInt("id_ingredient"));
+        stockMovement.setIngredient(ingredient);
 
         return stockMovement;
     }

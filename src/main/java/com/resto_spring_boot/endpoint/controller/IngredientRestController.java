@@ -2,9 +2,11 @@ package com.resto_spring_boot.endpoint.controller;
 
 import com.resto_spring_boot.endpoint.mapper.IngredientRestMapper;
 import com.resto_spring_boot.endpoint.rest.CreateIngredientPriceHitsory;
+import com.resto_spring_boot.endpoint.rest.CreateStockMovement;
 import com.resto_spring_boot.endpoint.rest.IngredientRest;
 import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.models.ingredient.IngredientPriceHistory;
+import com.resto_spring_boot.models.stock.StockMovement;
 import com.resto_spring_boot.service.IngredientService;
 import com.resto_spring_boot.service.exception.ClientException;
 import com.resto_spring_boot.service.exception.NotFoundException;
@@ -14,13 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController()
@@ -81,7 +79,15 @@ public class IngredientRestController {
 
 
     @PutMapping("/ingredients/{idIngredient}/stockMovements")
-    public ResponseEntity<Object> updateStockMovement(@PathVariable int idIngredient, @RequestBody List<Ingredient> ingredients) {
-        throw new UnsupportedOperationException("Not suppported yet");
+    public ResponseEntity<Object> updateStockMovement(@PathVariable int idIngredient,
+                                                      @RequestBody List<CreateStockMovement> stockMovements) {
+
+        List<StockMovement> stockMoves = stockMovements.stream()
+                .map(dto -> new StockMovement(dto.getQuantity(), dto.getUnit(), dto.getMovementType(), dto.getMovementDateTime()))
+                .toList();
+
+        Ingredient ingredient = ingredientService.addStockMovement(idIngredient, stockMoves);
+
+        return ResponseEntity.ok().body(ingredientRestMapper.IngredientToIngredientRest(ingredient));
     }
 }

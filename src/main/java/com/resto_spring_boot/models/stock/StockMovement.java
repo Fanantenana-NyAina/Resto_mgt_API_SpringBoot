@@ -15,9 +15,24 @@ import java.time.LocalDateTime;
 @Data
 public class StockMovement {
     private int IdMovement;
-    private Ingredient Ingredient;
+    private Ingredient ingredient;
     private Double quantity;
     private Unit unit;
     private Movement movementType;
     private LocalDateTime movementDateTime;
+
+    public StockMovement(Ingredient ingredient, Double quantity, Unit unit, Movement movementType, LocalDateTime movementDateTime) {
+        this.ingredient = ingredient;
+        this.quantity = quantity;
+        this.unit = unit;
+        this.movementType = movementType;
+        this.movementDateTime = movementDateTime;
+    }
+
+    public StockMovement(Double quantity, Unit unit, Movement movementType, LocalDateTime movementDateTime) {
+        this.quantity = quantity;
+        this.unit = unit;
+        this.movementType = movementType;
+        this.movementDateTime = movementDateTime;
+    }
 }
