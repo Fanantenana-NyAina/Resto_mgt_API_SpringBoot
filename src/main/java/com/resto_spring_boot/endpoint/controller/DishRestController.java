@@ -43,8 +43,11 @@ public class DishRestController {
         }
     }
 
-    @PutMapping("/dishes/{id}/ingredients")
-    public ResponseEntity<Object> addDishIngredientList () {
+    @PutMapping("/dishes/{idDish}/ingredients")
+    public ResponseEntity<Object> addDishIngredientList (
+            @PathVariable int idDish,
+            @RequestBody List<DishIngredient> dishIngredients) {
+
         throw new UnsupportedOperationException("not implemented yet");
     }
 }
