@@ -59,7 +59,7 @@ public class Ingredient {
             return getPrices();
         }
 
-        newPrices.forEach(price -> price.setIngredient(this)); // Lien crucial ici
+        newPrices.forEach(price -> price.setIngredient(this));
 
         if (this.prices == null) {
             this.prices = new ArrayList<>();
