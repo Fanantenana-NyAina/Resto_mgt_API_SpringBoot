@@ -17,8 +17,6 @@ public class DishIngredientRestMapper implements Function<DishIngredient, DishIn
         }
 
         return new DishIngredientRest(
-                dishIngredient.getIdDish(),
-                dishIngredient.getIngredient().getIdIngredient(),
                 dishIngredient.getRequireQuantity(),
                 dishIngredient.getUnit(),
                 dishIngredient.getIngredient().getIngredientName()

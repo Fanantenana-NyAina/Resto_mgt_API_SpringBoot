@@ -1,17 +1,20 @@
 package com.resto_spring_boot.endpoint.controller;
 
 import com.resto_spring_boot.endpoint.mapper.DishRestMapper;
+import com.resto_spring_boot.endpoint.rest.CreateDishIngredients;
 import com.resto_spring_boot.endpoint.rest.DishRest;
 import com.resto_spring_boot.models.dish.Dish;
+import com.resto_spring_boot.models.dish.DishIngredient;
+import com.resto_spring_boot.models.ingredient.Ingredient;
 import com.resto_spring_boot.service.DishService;
+import com.resto_spring_boot.service.IngredientService;
 import com.resto_spring_boot.service.exception.ClientException;
 import com.resto_spring_boot.service.exception.NotFoundException;
 import com.resto_spring_boot.service.exception.ServerException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,6 +25,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class DishRestController {
     private final DishService dishService;
     private final DishRestMapper dishRestMapper;
+    private final IngredientService ingredientService;
 
     @GetMapping("/dishes")
     public ResponseEntity<Object> getDishes(@RequestParam(name="page", required = false) int page,
@@ -43,11 +47,16 @@ public class DishRestController {
         }
     }
 
-    @PutMapping("/dishes/{idDish}/ingredients")
-    public ResponseEntity<Object> addDishIngredientList (
-            @PathVariable int idDish,
-            @RequestBody List<DishIngredient> dishIngredients) {
-
-        throw new UnsupportedOperationException("not implemented yet");
+    @PutMapping("/dishes/{id}/ingredients")
+    public ResponseEntity<Object> updateIngredients(@PathVariable int id, @RequestBody List<CreateDishIngredients> dishIngredients){
+        List<DishIngredient> ingredients = dishIngredients.stream()
+                .map(ingredient->
+                        new DishIngredient(
+                                new Ingredient(ingredient.getIngredient().getIdIngredient(),ingredient.getIngredient().getIngredientName()),
+                                ingredient.getRequiredQuantity(),
+                                ingredient.getUnit())
+                ).toList();
+        Dish ingredient = dishService.addDishes(id,ingredients);
+        return ResponseEntity.status(HttpStatus.OK).body(ingredient);
     }
 }

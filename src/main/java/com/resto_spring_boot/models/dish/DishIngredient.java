@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -18,4 +17,19 @@ public class DishIngredient {
     private Double requireQuantity;
     private Unit unit;
     private Ingredient ingredient;
+    private String IngredientName;
+    private Dish dish;
+
+    public DishIngredient(Ingredient ingredient, Double requireQuantity, Unit unit) {
+        this.ingredient = ingredient;
+        this.requireQuantity = requireQuantity;
+        this.unit = unit;
+    }
+
+    public DishIngredient(Dish dish, Ingredient ingredient, Double requireQuantity, Unit unit) {
+        this.dish = dish;
+        this.ingredient = ingredient;
+        this.requireQuantity = requireQuantity;
+        this.unit = unit;
+    }
 }

@@ -110,4 +110,24 @@ public class IngredientDAO implements DAO<Ingredient> {
             throw new ServerException(e);
         }
     }
+
+    public Ingredient findByName(String ingredientName) {
+        String sql = "select i.id_ingredient, i.name from ingredient i where i.name = ?";
+
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, ingredientName);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return ingredientMapper.apply(rs);
+                }
+
+                throw new NotFoundException("Ingredient.name =" + ingredientName + " not found");
+            }
+
+        } catch (SQLException e) {
+            throw new ServerException(e);
+        }
+    }
 }

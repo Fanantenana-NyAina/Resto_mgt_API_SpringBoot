@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -16,6 +17,12 @@ public class Dish {
     private String dishName;
     private Double unitPrice;
     private List<DishIngredient> dishIngredients;
+
+    public List<DishIngredient> addIngredients(List<DishIngredient> ingredientList) {
+        List<DishIngredient> dishIngredients = this.dishIngredients;
+        dishIngredients.addAll(ingredientList);
+        return dishIngredients;
+    }
 
     public int getAvalaibleQuantity() {
         if (dishIngredients == null || dishIngredients.isEmpty()) {

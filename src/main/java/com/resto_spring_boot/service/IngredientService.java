@@ -103,4 +103,8 @@ public class IngredientService {
         ingredient.getStockMovements().addAll(savingStockMoves);
         return ingredientDAO.getById(ingredientId);
     }
+
+    public Ingredient findByName(String name) {
+        return ingredientDAO.findByName(name);
+    }
 }

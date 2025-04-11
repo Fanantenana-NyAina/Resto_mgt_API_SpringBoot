@@ -5,12 +5,10 @@ import com.resto_spring_boot.dao.mapper.DishIngredientMapper;
 import com.resto_spring_boot.models.dish.DishIngredient;
 import com.resto_spring_boot.service.exception.ServerException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +28,47 @@ public class DishIngredientDAO implements DAO<DishIngredient> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @SneakyThrows
     @Override
-    public List<DishIngredient> saveAll(List<DishIngredient> entity) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<DishIngredient> saveAll(List<DishIngredient> entities) {
+        List<DishIngredient> savedDishIngredients = new ArrayList<>();
+
+        String sql = """
+        insert into dish_ingredient (id_dish, id_ingredient, required_quantity, unit)
+        values (?, ?, ?, ?::unit)
+        on conflict (id_dish, id_ingredient)
+        do update set required_quantity = excluded.required_quantity, unit = excluded.unit
+        returning id_dish, id_ingredient, required_quantity, unit
+    """;
+
+        try (Connection con = datasource.getConnection()) {
+            con.setAutoCommit(false);
+
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                for (DishIngredient entity : entities) {
+                    ps.setInt(1, entity.getIdDish());
+                    ps.setInt(2, entity.getIngredient().getIdIngredient());
+                    ps.setDouble(3, entity.getRequireQuantity());
+                    ps.setString(4, entity.getUnit().toString());
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            savedDishIngredients.add(dishIngredientMapper.apply(rs));
+                        }
+                    }
+                }
+                con.commit();
+            } catch (SQLException e) {
+                con.rollback();
+                throw new ServerException(e);
+            } finally {
+                con.setAutoCommit(true);
+            }
+        }
+
+        return savedDishIngredients;
     }
+
 
     public List<DishIngredient> findDishIngredientByIdDish(int idDish) {
         String sql = "select di.id_dish, di.id_ingredient, di.required_quantity, di.unit " +
@@ -54,6 +89,37 @@ public class DishIngredientDAO implements DAO<DishIngredient> {
         } catch (SQLException e) {
             throw new ServerException(e);
         }
+    }
 
+    @SneakyThrows
+    public List<DishIngredient> saveAllDishIngredient(List<DishIngredient> items, int idDish) {
+
+        List<DishIngredient> dishIngredients = new ArrayList<>();
+        String sql = """
+       insert into dish_ingredient (id_dish, id_ingredient, required_quantity, unit)
+        values (?, ?, ?, ?::unit)
+        on conflict (id_dish, id_ingredient)
+        do update set required_quantity = excluded.required_quantity, unit = excluded.unit
+        returning id_dish, id_ingredient, required_quantity, unit
+        """;
+
+        try (Connection conn = datasource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            for (DishIngredient item : items) {
+                ps.setInt(1, idDish);
+                ps.setInt(2, item.getIngredient().getIdIngredient());
+                ps.setDouble(3, item.getRequireQuantity());
+                ps.setString(4, item.getUnit().toString());
+                ps.addBatch();
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    dishIngredients.add(dishIngredientMapper.apply(rs));
+                }
+            }
+            return dishIngredients;
+        }
     }
 }
