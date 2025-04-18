@@ -2,10 +2,12 @@ package com.resto_spring_boot.endpoint.controller;
 
 import com.resto_spring_boot.endpoint.mapper.DishRestMapper;
 import com.resto_spring_boot.endpoint.rest.CreateDishIngredients;
+import com.resto_spring_boot.endpoint.rest.CreateStockMovement;
 import com.resto_spring_boot.endpoint.rest.DishRest;
 import com.resto_spring_boot.models.dish.Dish;
 import com.resto_spring_boot.models.dish.DishIngredient;
 import com.resto_spring_boot.models.ingredient.Ingredient;
+import com.resto_spring_boot.models.stock.StockMovement;
 import com.resto_spring_boot.service.DishService;
 import com.resto_spring_boot.service.IngredientService;
 import com.resto_spring_boot.service.exception.ClientException;
@@ -48,7 +50,8 @@ public class DishRestController {
     }
 
     @PutMapping("/dishes/{id}/ingredients")
-    public ResponseEntity<Object> updateIngredients(@PathVariable int id, @RequestBody List<CreateDishIngredients> dishIngredients){
+    public ResponseEntity<Object> updateIngredients(@PathVariable int id,
+                                                    @RequestBody List<CreateDishIngredients> dishIngredients){
         List<DishIngredient> ingredients = dishIngredients.stream()
                 .map(ingredient->
                         new DishIngredient(
@@ -59,4 +62,17 @@ public class DishRestController {
         Dish ingredient = dishService.addDishes(id,ingredients);
         return ResponseEntity.status(HttpStatus.OK).body(ingredient);
     }
+
+    /*@PutMapping("/dishes/{idDish}/ingredients")
+    public ResponseEntity<Object> updateStockMovement(@PathVariable int idDish,
+                                                      @RequestBody List<CreateDishIngredients> dishIngredients) {
+
+        List<DishIngredient> stockMoves = dishIngredients.stream()
+                .map(dto -> new DishIngredient(dto.getQuantity(), dto.getUnit(), dto.getMovementType(), dto.getMovementDateTime()))
+                .toList();
+
+        Ingredient ingredient = ingredientService.addStockMovement(idIngredient, stockMoves);
+
+        return ResponseEntity.ok().body(ingredientRestMapper.IngredientToIngredientRest(ingredient));
+    }*/
 }

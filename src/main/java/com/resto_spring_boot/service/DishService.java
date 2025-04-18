@@ -36,11 +36,28 @@ public class DishService {
         return dishDAO.getById(idDish);
     }
 
-    public Dish addDishes(int idDish, List<DishIngredient> dishesToAdd) {
+    /*public Dish addDishes(int idDish, List<DishIngredient> dishesToAdd) {
         Dish dish = dishDAO.getById(idDish);
         dish.addIngredients(dishesToAdd);
 
         List<Dish> dishesSaved = dishDAO.saveAll(List.of(dish));
         return dishesSaved.getFirst();
+    }*/
+
+    public Dish addDishes(int idDish, List<DishIngredient> dishesToAdd) {
+        Dish dish = dishDAO.getById(idDish); // get le plat
+
+        for (DishIngredient di : dishesToAdd) {
+            di.setIdDish(idDish); // on s'assure qu'ils ont tous le bon idDish
+        }
+
+        // ➕ Enregistre les liens entre dish et ingredients
+        dishIngredientDAO.saveAll(dishesToAdd);
+
+        // 🔄 Recharge les ingrédients depuis la base
+        List<DishIngredient> dishIngredients = dishIngredientDAO.findDishIngredientByIdDish(idDish);
+        dish.setDishIngredients(dishIngredients);
+
+        return dish;
     }
 }

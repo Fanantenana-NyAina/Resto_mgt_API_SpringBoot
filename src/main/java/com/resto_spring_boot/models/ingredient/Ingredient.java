@@ -22,8 +22,8 @@ import static com.resto_spring_boot.models.stock.Movement.OUT;
 public class Ingredient {
     private int idIngredient;
     private String ingredientName;
-    private List<IngredientPriceHistory> prices;
-    private List<StockMovement> stockMovements;
+    private List<IngredientPriceHistory> prices = new ArrayList<>();
+    private List<StockMovement> stockMovements = new ArrayList<>();
 
     public Ingredient(int idIngredient, String ingredientName) {
         this.idIngredient = idIngredient;
